@@ -1,0 +1,81 @@
+using System;
+using OfficeOpenXml;
+
+class Program
+{
+    public static void FastDtToExcel(System.Data.DataTable dt, ExcelWorksheet worksheet, int firstRow, int firstCol, int lastRow, int lastCol)
+    {
+        ExcelRange range = worksheet.Cells[firstRow, firstCol, lastRow, lastCol];
+        if (dt.Rows.Count > 0)
+        {
+            string[,] strArray = new string[dt.Rows.Count, dt.Columns.Count];
+            int num = 0;
+            while (true)
+            {
+                if (num >= dt.Rows.Count)
+                {
+                    range.Value = strArray;
+                    range.AutoFitColumns();
+                    range.Style.Font.Name = "Calibri";
+                    range.Style.Font.Size = 11;
+                    break;
+                }
+                int num2 = 0;
+                while (true)
+                {
+                    if (num2 >= dt.Columns.Count)
+                    {
+                        num++;
+                        break;
+                    }
+                    strArray[num, num2] = dt.Rows[num][num2].ToString();
+                    num2++;
+                }
+            }
+        }
+
+        ExcelRange range2 = worksheet.Cells[1, 1, 1, dt.Columns.Count];
+        range2.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+        range2.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+
+        int num3 = 1;
+        while (true)
+        {
+            if (num3 > dt.Columns.Count)
+            {
+                range2.AutoFitColumns();
+                range2.Style.Font.Bold = true;
+                return;
+            }
+            worksheet.Cells[1, num3].Value = dt.Columns[num3 - 1].ColumnName;
+            num3++;
+        }
+    }
+}
+Here, Instead of using Excel.Range, Excel.Range.Value2, Excel.Range.EntireColumn.AutoFit(), Excel.Range.Font.Name, Excel.Range.Font.Size, Excel.Range.Interior.Color I have used ExcelRange, ExcelRange.Value, ExcelRange.AutoFitColumns(), ExcelRange.Style.Font.Name, ExcelRange.Style.Font.Size, ExcelRange.Style.Fill.BackgroundColor.SetColor()
+
+Also, instead of using Excel.Worksheet I have used ExcelWorksheet
+
+and Instead of using Excel.Range.get_Range(string,string) I have used ExcelWorksheet.Cells[int,int,int,int]
+
+As you can see, the basic functionality is the same and the class and method names are very similar. But the way of accessing the properties and methods of these class are different.
+
+using (OracleConnection conn = new OracleConnection("your connection string"))
+{
+    using (OracleCommand cmd = new OracleCommand("your sql query", conn))
+    {
+        using (OracleDataReader reader = cmd.ExecuteReader())
+        {
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                worksheet.Cells["A1"].LoadFromDataReader(reader, true);
+                for (int i = 1; i <= reader.FieldCount; i++)
+                {
+                    worksheet.Column(i).AutoFit();
+                }
+                package.SaveAs(new FileInfo("your file path"));
+            }
+        }
+    }
+}
