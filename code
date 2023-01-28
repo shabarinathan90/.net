@@ -1,3 +1,54 @@
+void sendEmail(string[] recipient, string sender, string subject, string body, List<string> attachments, string smtpServer, int port)
+{
+    var emailMessage = new MimeMessage();
+    emailMessage.From.Add(new MailboxAddress(sender));
+    emailMessage.To.AddRange(recipient.Select(x => new MailboxAddress(x)));
+    var ext = Path.GetExtension(attachments[0]).ToLower();
+    if (ext == ".xlsx")
+    {
+        subject = "report " + attachments[0].Split('\\').Last().Split('.')[0] + " " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        body = "Hi,\n\nplease find attached " + attachments[0].Split('\\').Last() + ".\n\nFor any queries please reach out to ask compass.\n\nThanks,\nask compass.";
+    }
+    else if (ext == ".txt")
+    {
+        subject = "report " + attachments[0].Split('\\').Last().Split('.')[0] + " " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        body = "Hi,\n\nwe have SFTP the file " + attachments[0].Split('\\').Last() + ".\n\nFor any queries please reach out to ask compass.\n\nThanks,\nask compass.";
+    }
+    else if (ext == ".html")
+    {
+        subject = "report " + attachments[0].Split('\\').Last().Split('.')[0] + " " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        body = "Hi,\n\nwe have SFTP the file " + attachments[0].Split('\\').Last() + ".\n\nFor any queries please reach out to ask compass.\n\nThanks,\nask compass.";
+    }
+    emailMessage.Subject = subject;
+    var bodyBuilder = new BodyBuilder();
+    bodyBuilder.HtmlBody = body;
+    if (attachments.Count > 0)
+    {
+        for (int i = 0; i < attachments.Count; i++)
+        {
+            ext = Path.GetExtension(attachments[i]).ToLower();
+            if (ext == ".xlsx" || ext == ".txt" || ext == ".html")
+            {
+                bodyBuilder.Attachments.Add(attachments[i]);
+            }
+        }
+    }
+    emailMessage.Body = bodyBuilder.ToMessageBody();
+    using (var client = new SmtpClient())
+    {
+        client.Connect(smtpServer, port);
+        client.Send(emailMessage);
+        client.Disconnect(true);
+    }
+}
+
+
+
+
+
+
+
+
 using System;
 using OfficeOpenXml;
 
