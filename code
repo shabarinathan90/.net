@@ -167,3 +167,84 @@ public static void SendEmail(List<string> lstFilename, string toEmail, string fr
         client.Disconnect(true);
     }
 }
+
+-------------------------
+NLog.config
+
+
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <targets>
+    <target name="file" xsi:type="File" fileName="mylog.txt" layout="${longdate} ${level} ${message}" />
+  </targets>
+
+  <rules>
+    <logger name="*" minlevel="Info" writeTo="file" />
+  </rules>
+
+</nlog>
+
+
+--------------------
+After installing the package, you need to create a NLog.config file in the root folder of your project, similar to the one I shared in my previous answer. You can use the same file, but change the fileName attribute to ${basedir}/logs/${appsetting:name=logFolder}/${appsetting:name=logFileName}.txt to read the folder and filename details from appsettings.json.
+
+Next, you need to create an appsettings.json file in the root folder of your project, with the following content:
+
+{
+  "logFolder": "logs",
+  "logFileName": "default"
+}
+
+
+This file contains the folder and filename details that will be used to create the log file.
+
+In your C# code, you need to read the appsettings.json file and use the values to configure NLog. Here's an example of how to do this:
+
+
+using Microsoft.Extensions.Configuration;
+using NLog;
+using NLog.Web;
+
+// ...
+
+var config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .Build();
+LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
+
+var logger = NLogBuilder.ConfigureNLog(LogManager.Configuration).GetCurrentClassLogger();
+
+
+
+This code reads the appsettings.json file, sets it as the configuration for NLog, and creates a logger object that you can use to write log messages.
+
+To write a log message, you can use one of the logging methods on the ILogger object. For example:
+
+logger.Info("Log message");
+
+This code writes a log message with a severity of Info to a file with the filename and folder details read from appsettings.json.
+
+To update the logFileName value in appsettings.json based on the value of args[0], you can add the following code before reading the configuration:
+
+
+config["logFileName"] = $"{args[0]}_{DateTime.Now:dd-MMM-yyyy}";
+
+
+This code sets the logFileName value to {args[0]}_{current date}.
+
+That's it! With these changes, you should be able to write log messages to a file using NLog, with the filename and folder details retrieved from appsettings.json.
+
+
+logger.Error("An error occurred: {0}", ex.Message);
+
+
+
+var logger = LogManager.GetCurrentClassLogger();
+logger.Info("Application started");
+logger.Error("An error occurred");
+
+// Shutdown NLog and flush any pending log messages
+LogManager.Shutdown();
+
