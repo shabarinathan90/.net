@@ -60,3 +60,52 @@ class Program
         logger.LogInformation($"Logs will be written to {logFilePath}");
     }
 }
+
+
+
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using NLog;
+using NLog.Extensions.Logging;
+using System;
+using System.IO;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
+
+            var logFilePath = Path.Combine(config["Logging:LogDirectory"], $"{args[0]}_{DateTime.Now:dd-MMM-yyyy}.log");
+
+            LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("Logging:NLog"));
+
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddNLog(new NLogProviderOptions
+                {
+                    CaptureMessageTemplates = true,
+                    ParseMessageTemplates = true,
+                    Name = "Logger",
+                    LogLevel = LogLevel.Trace,
+                    IncludeScopes = true
+                });
+
+                builder.AddConsole();
+                builder.SetMinimumLevel(LogLevel.Trace);
+            });
+
+            var logger = loggerFactory.CreateLogger("Logger");
+
+            logger.LogInformation("This is a test log message.");
+
+            loggerFactory.Dispose();
+        }
+    }
+}
+
