@@ -109,3 +109,50 @@ namespace ConsoleApp1
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using System;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            IConfigurationRoot config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
+
+            var nlogConfig = config.GetSection("NLog").Get<NLog.Extensions.Logging.NLogProviderOptions>();
+            var logFilePath = $"{args[0]}_{DateTime.Now:dd-MMM-yyyy}.txt";
+            nlogConfig.AutoReload = true;
+            nlogConfig.LoggingRules.Add(new NLog.Targets.LoggingRule("*", NLog.LogLevel.Trace, new NLog.Targets.FileTarget("logfile") { FileName = logFilePath }));
+
+            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.SetMinimumLevel(LogLevel.Trace);
+                builder.AddNLog(nlogConfig);
+            });
+
+            ILogger logger = loggerFactory.CreateLogger<Program>();
+            logger.LogInformation("This is a test log message.");
+
+            Console.ReadLine();
+        }
+    }
+}
+
