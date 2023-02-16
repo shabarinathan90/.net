@@ -371,12 +371,11 @@ The LogManager.Shutdown() method is called at the end to ensure that all logs ar
 
 
 
-
-
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using NLog;
-using NLog.Extensions.Logging;
-using System;
+using NLog.Config;
+using NLog.Targets;
 
 namespace ConsoleApp1
 {
@@ -385,39 +384,27 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
-
-            var logFilePath = config.GetValue<string>("Logging:LogFilePath");
 
             var loggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true,
-                    ShutdownOnDispose = true
-                });
-
-                var fileTarget = new NLog.Targets.FileTarget("logfile")
-                {
-                    FileName = logFilePath
-                };
-
-                var logLevel = LogLevel.Debug;
-
-                var loggingRule = new NLog.Config.LoggingRule("*", logLevel, fileTarget);
-                config.LoggingRules.Add(loggingRule);
-
-                LogManager.Configuration = config;
+                builder.AddNLog(config);
             });
 
-            var logger = loggerFactory.CreateLogger("Program");
-            logger.LogInformation("Application started at {StartTime}", DateTime.Now);
-            
-            // rest of the application code goes here
-            
-            logger.LogInformation("Application ended at {EndTime}", DateTime.Now);
+            var logger = loggerFactory.CreateLogger<Program>();
+
+            var logFileName = args[0];
+            var logFilePath = config["Logging:LogFilePath"] + "\\" + logFileName + "_" + System.DateTime.Now.ToString("dd-MMM-yyyy") + ".txt";
+
+            var nlogConfig = config.GetSection("Logging:NLog").Get<NLogProviderOptions>();
+            var fileTarget = (FileTarget)LogManager.Configuration.FindTargetByName(nlogConfig.Name);
+            fileTarget.FileName = logFilePath;
+
+            LogManager.ReconfigExistingLoggers();
+            logger.LogInformation("This is a test log message");
+
+            LogManager.Shutdown();
         }
     }
 }
