@@ -248,3 +248,108 @@ logger.Error("An error occurred");
 // Shutdown NLog and flush any pending log messages
 LogManager.Shutdown();
 
+
+
+
+
+
+
+
+
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    },
+    "NLog": {
+      "autoReload": true,
+      "internalLogLevel": "Off",
+      "internalLogFile": "logs/internal-nlog.txt",
+      "targets": {
+        "logfile": {
+          "type": "File",
+          "fileName": "",
+          "layout": "${longdate} ${uppercase:${level}} ${message}"
+        }
+      },
+      "rules": [
+        {
+          "logger": "*",
+          "minLevel": "Trace",
+          "writeTo": "logfile"
+        }
+      ]
+    }
+  },
+  "LogFileDirectory": "logs/"
+}
+
+
+
+Note that the fileName property in the targets section is set to an empty string. We'll replace this with the actual log file name at runtime.
+
+Next, install the NLog.Extensions.Logging package in your project.
+
+In your Program.cs file, add the following code:
+
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Load configuration from appsettings.json file
+        IConfiguration config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+        // Set up dependency injection
+        var serviceProvider = new ServiceCollection()
+            .AddLogging(builder =>
+            {
+                builder.ClearProviders();
+                builder.SetMinimumLevel(LogLevel.Trace);
+                builder.AddNLog(config.GetSection("Logging:NLog"));
+            })
+            .BuildServiceProvider();
+
+        // Get the logger
+        var logger = serviceProvider.GetService<ILogger<Program>>();
+
+        // Get the log file name from the command line arguments
+        if (args.Length < 1)
+        {
+            logger.LogError("Log file name not specified.");
+            return;
+        }
+        string logFileName = args[0];
+
+        // Get the log file path from the appsettings.json file
+        string logFilePath = config["LogFileDirectory"] + logFileName;
+
+        // Update the NLog configuration with the log file path
+        var nlogConfig = config.GetSection("Logging:NLog").Get<NLog.Extensions.Logging.NLogProviderOptions>();
+        nlogConfig.Targets["logfile"].FileName = logFilePath;
+
+        // Write some log messages
+        logger.LogInformation("This is an information log message.");
+        logger.LogWarning("This is a warning log message.");
+        logger.LogError("This is an error log message.");
+
+        LogManager.Shutdown();
+    }
+}
+
+
+
+This code loads the logging configuration from the appsettings.json file, sets up dependency injection to use NLog as the logging provider, and then reads the log file name from the command line arguments and the log file path from the appsettings.json file. It then updates the NLog configuration with the log file path and writes some log messages.
+
+The LogManager.Shutdown() method is called at the end to ensure that all logs are written to disk before the application exits.
