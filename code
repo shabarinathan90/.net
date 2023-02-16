@@ -353,3 +353,72 @@ class Program
 This code loads the logging configuration from the appsettings.json file, sets up dependency injection to use NLog as the logging provider, and then reads the log file name from the command line arguments and the log file path from the appsettings.json file. It then updates the NLog configuration with the log file path and writes some log messages.
 
 The LogManager.Shutdown() method is called at the end to ensure that all logs are written to disk before the application exits.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+using Microsoft.Extensions.Configuration;
+using NLog;
+using NLog.Extensions.Logging;
+using System;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var logFilePath = config.GetValue<string>("Logging:LogFilePath");
+
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddNLog(new NLogProviderOptions
+                {
+                    CaptureMessageTemplates = true,
+                    CaptureMessageProperties = true,
+                    ShutdownOnDispose = true
+                });
+
+                var fileTarget = new NLog.Targets.FileTarget("logfile")
+                {
+                    FileName = logFilePath
+                };
+
+                var logLevel = LogLevel.Debug;
+
+                var loggingRule = new NLog.Config.LoggingRule("*", logLevel, fileTarget);
+                config.LoggingRules.Add(loggingRule);
+
+                LogManager.Configuration = config;
+            });
+
+            var logger = loggerFactory.CreateLogger("Program");
+            logger.LogInformation("Application started at {StartTime}", DateTime.Now);
+            
+            // rest of the application code goes here
+            
+            logger.LogInformation("Application ended at {EndTime}", DateTime.Now);
+        }
+    }
+}
+
