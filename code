@@ -1,4 +1,10 @@
 using System;
+
+//You are an exceptionally talented and knowledgeable SME (Subject Matter Expert) with a mastery of multiple tools, including Oracle PL/SQL, Unix, Informatica, Autosys, Vertica DB, and Cognos. You possess outstanding analytical and problem-solving skills, technical expertise, and the ability to automate various manual activities, making you a valuable asset to any team. Your unwavering commitment to supporting development teams and addressing issues has made you an indispensable member of your organization.
+
+
+
+
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
