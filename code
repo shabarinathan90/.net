@@ -1,411 +1,62 @@
-void sendEmail(string[] recipient, string sender, string subject, string body, List<string> attachments, string smtpServer, int port)
-{
-    var emailMessage = new MimeMessage();
-    emailMessage.From.Add(new MailboxAddress(sender));
-    emailMessage.To.AddRange(recipient.Select(x => new MailboxAddress(x)));
-    var ext = Path.GetExtension(attachments[0]).ToLower();
-    if (ext == ".xlsx")
-    {
-        subject = "report " + attachments[0].Split('\\').Last().Split('.')[0] + " " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        body = "Hi,\n\nplease find attached " + attachments[0].Split('\\').Last() + ".\n\nFor any queries please reach out to ask compass.\n\nThanks,\nask compass.";
-    }
-    else if (ext == ".txt")
-    {
-        subject = "report " + attachments[0].Split('\\').Last().Split('.')[0] + " " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        body = "Hi,\n\nwe have SFTP the file " + attachments[0].Split('\\').Last() + ".\n\nFor any queries please reach out to ask compass.\n\nThanks,\nask compass.";
-    }
-    else if (ext == ".html")
-    {
-        subject = "report " + attachments[0].Split('\\').Last().Split('.')[0] + " " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        body = "Hi,\n\nwe have SFTP the file " + attachments[0].Split('\\').Last() + ".\n\nFor any queries please reach out to ask compass.\n\nThanks,\nask compass.";
-    }
-    emailMessage.Subject = subject;
-    var bodyBuilder = new BodyBuilder();
-    bodyBuilder.HtmlBody = body;
-    if (attachments.Count > 0)
-    {
-        for (int i = 0; i < attachments.Count; i++)
-        {
-            ext = Path.GetExtension(attachments[i]).ToLower();
-            if (ext == ".xlsx" || ext == ".txt" || ext == ".html")
-            {
-                bodyBuilder.Attachments.Add(attachments[i]);
-            }
-        }
-    }
-    emailMessage.Body = bodyBuilder.ToMessageBody();
-    using (var client = new SmtpClient())
-    {
-        client.Connect(smtpServer, port);
-        client.Send(emailMessage);
-        client.Disconnect(true);
-    }
-}
-
-
-
-
-
-
-
-
 using System;
-using OfficeOpenXml;
-
-class Program
-{
-    public static void FastDtToExcel(System.Data.DataTable dt, ExcelWorksheet worksheet, int firstRow, int firstCol, int lastRow, int lastCol)
-    {
-        ExcelRange range = worksheet.Cells[firstRow, firstCol, lastRow, lastCol];
-        if (dt.Rows.Count > 0)
-        {
-            string[,] strArray = new string[dt.Rows.Count, dt.Columns.Count];
-            int num = 0;
-            while (true)
-            {
-                if (num >= dt.Rows.Count)
-                {
-                    range.Value = strArray;
-                    range.AutoFitColumns();
-                    range.Style.Font.Name = "Calibri";
-                    range.Style.Font.Size = 11;
-                    break;
-                }
-                int num2 = 0;
-                while (true)
-                {
-                    if (num2 >= dt.Columns.Count)
-                    {
-                        num++;
-                        break;
-                    }
-                    strArray[num, num2] = dt.Rows[num][num2].ToString();
-                    num2++;
-                }
-            }
-        }
-
-        ExcelRange range2 = worksheet.Cells[1, 1, 1, dt.Columns.Count];
-        range2.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-        range2.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
-
-        int num3 = 1;
-        while (true)
-        {
-            if (num3 > dt.Columns.Count)
-            {
-                range2.AutoFitColumns();
-                range2.Style.Font.Bold = true;
-                return;
-            }
-            worksheet.Cells[1, num3].Value = dt.Columns[num3 - 1].ColumnName;
-            num3++;
-        }
-    }
-}
-Here, Instead of using Excel.Range, Excel.Range.Value2, Excel.Range.EntireColumn.AutoFit(), Excel.Range.Font.Name, Excel.Range.Font.Size, Excel.Range.Interior.Color I have used ExcelRange, ExcelRange.Value, ExcelRange.AutoFitColumns(), ExcelRange.Style.Font.Name, ExcelRange.Style.Font.Size, ExcelRange.Style.Fill.BackgroundColor.SetColor()
-
-Also, instead of using Excel.Worksheet I have used ExcelWorksheet
-
-and Instead of using Excel.Range.get_Range(string,string) I have used ExcelWorksheet.Cells[int,int,int,int]
-
-As you can see, the basic functionality is the same and the class and method names are very similar. But the way of accessing the properties and methods of these class are different.
-
-using (OracleConnection conn = new OracleConnection("your connection string"))
-{
-    using (OracleCommand cmd = new OracleCommand("your sql query", conn))
-    {
-        using (OracleDataReader reader = cmd.ExecuteReader())
-        {
-            using (ExcelPackage package = new ExcelPackage())
-            {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet1");
-                worksheet.Cells["A1"].LoadFromDataReader(reader, true);
-                for (int i = 1; i <= reader.FieldCount; i++)
-                {
-                    worksheet.Column(i).AutoFit();
-                }
-                package.SaveAs(new FileInfo("your file path"));
-            }
-        }
-    }
-}
-
-
-
-using MailKit;
-using MimeKit;
 using System.IO;
-
-public static void SendEmail(List<string> lstFilename, string toEmail, string fromEmail, string smtpServer, int smtpPort)
-{
-    var message = new MimeMessage();
-    message.From.Add(new MailboxAddress(fromEmail));
-    message.To.Add(new MailboxAddress(toEmail));
-    message.Subject = "Email Subject";
-
-    var bodyBuilder = new BodyBuilder();
-    bodyBuilder.TextBody = "Email Body";
-
-    if (lstFilename.Count > 0)
-    {
-        for (int i = 0; i < lstFilename.Count; i++)
-        {
-            var ext = Path.GetExtension(lstFilename[i]).ToLower();
-            if (ext == ".xlsx" || ext == ".txt" || ext == ".html")
-            {
-                bodyBuilder.Attachments.Add(lstFilename[i]);
-            }
-        }
-    }
-    message.Body = bodyBuilder.ToMessageBody();
-
-    using (var client = new MailKit.Net.Smtp.SmtpClient())
-    {
-        client.Connect(smtpServer, smtpPort, MailKit.Security.SecureSocketOptions.StartTls);
-        client.Send(message);
-        client.Disconnect(true);
-    }
-}
-
--------------------------
-NLog.config
-
-
-<?xml version="1.0" encoding="utf-8" ?>
-<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
-  <targets>
-    <target name="file" xsi:type="File" fileName="mylog.txt" layout="${longdate} ${level} ${message}" />
-  </targets>
-
-  <rules>
-    <logger name="*" minlevel="Info" writeTo="file" />
-  </rules>
-
-</nlog>
-
-
---------------------
-After installing the package, you need to create a NLog.config file in the root folder of your project, similar to the one I shared in my previous answer. You can use the same file, but change the fileName attribute to ${basedir}/logs/${appsetting:name=logFolder}/${appsetting:name=logFileName}.txt to read the folder and filename details from appsettings.json.
-
-Next, you need to create an appsettings.json file in the root folder of your project, with the following content:
-
-{
-  "logFolder": "logs",
-  "logFileName": "default"
-}
-
-
-This file contains the folder and filename details that will be used to create the log file.
-
-In your C# code, you need to read the appsettings.json file and use the values to configure NLog. Here's an example of how to do this:
-
-
 using Microsoft.Extensions.Configuration;
-using NLog;
-using NLog.Web;
-
-// ...
-
-var config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .Build();
-LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
-
-var logger = NLogBuilder.ConfigureNLog(LogManager.Configuration).GetCurrentClassLogger();
-
-
-
-This code reads the appsettings.json file, sets it as the configuration for NLog, and creates a logger object that you can use to write log messages.
-
-To write a log message, you can use one of the logging methods on the ILogger object. For example:
-
-logger.Info("Log message");
-
-This code writes a log message with a severity of Info to a file with the filename and folder details read from appsettings.json.
-
-To update the logFileName value in appsettings.json based on the value of args[0], you can add the following code before reading the configuration:
-
-
-config["logFileName"] = $"{args[0]}_{DateTime.Now:dd-MMM-yyyy}";
-
-
-This code sets the logFileName value to {args[0]}_{current date}.
-
-That's it! With these changes, you should be able to write log messages to a file using NLog, with the filename and folder details retrieved from appsettings.json.
-
-
-logger.Error("An error occurred: {0}", ex.Message);
-
-
-
-var logger = LogManager.GetCurrentClassLogger();
-logger.Info("Application started");
-logger.Error("An error occurred");
-
-// Shutdown NLog and flush any pending log messages
-LogManager.Shutdown();
-
-
-
-
-
-
-
-
-
-
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
-    },
-    "NLog": {
-      "autoReload": true,
-      "internalLogLevel": "Off",
-      "internalLogFile": "logs/internal-nlog.txt",
-      "targets": {
-        "logfile": {
-          "type": "File",
-          "fileName": "",
-          "layout": "${longdate} ${uppercase:${level}} ${message}"
-        }
-      },
-      "rules": [
-        {
-          "logger": "*",
-          "minLevel": "Trace",
-          "writeTo": "logfile"
-        }
-      ]
-    }
-  },
-  "LogFileDirectory": "logs/"
-}
-
-
-
-Note that the fileName property in the targets section is set to an empty string. We'll replace this with the actual log file name at runtime.
-
-Next, install the NLog.Extensions.Logging package in your project.
-
-In your Program.cs file, add the following code:
-
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog;
 using NLog.Extensions.Logging;
-using System;
 
 class Program
 {
     static void Main(string[] args)
     {
-        // Load configuration from appsettings.json file
-        IConfiguration config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .Build();
 
-        // Set up dependency injection
-        var serviceProvider = new ServiceCollection()
-            .AddLogging(builder =>
-            {
-                builder.ClearProviders();
-                builder.SetMinimumLevel(LogLevel.Trace);
-                builder.AddNLog(config.GetSection("Logging:NLog"));
-            })
-            .BuildServiceProvider();
+        var logFileName = args[0]; // assuming the log file name is passed as the first argument
+        var logFolderPath = config["Logging:LogFolderPath"]; // getting log folder path from appsettings.json
 
-        // Get the logger
-        var logger = serviceProvider.GetService<ILogger<Program>>();
-
-        // Get the log file name from the command line arguments
-        if (args.Length < 1)
+        if (!Directory.Exists(logFolderPath))
         {
-            logger.LogError("Log file name not specified.");
-            return;
+            Directory.CreateDirectory(logFolderPath);
         }
-        string logFileName = args[0];
 
-        // Get the log file path from the appsettings.json file
-        string logFilePath = config["LogFileDirectory"] + logFileName;
+        var logFilePath = Path.Combine(logFolderPath, $"{logFileName}_{DateTime.Now:dd-MMM-yyyy}.txt");
 
-        // Update the NLog configuration with the log file path
-        var nlogConfig = config.GetSection("Logging:NLog").Get<NLog.Extensions.Logging.NLogProviderOptions>();
-        nlogConfig.Targets["logfile"].FileName = logFilePath;
+        var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.SetMinimumLevel(LogLevel.Debug);
+            builder.AddNLog(config);
+        });
 
-        // Write some log messages
-        logger.LogInformation("This is an information log message.");
-        logger.LogWarning("This is a warning log message.");
-        logger.LogError("This is an error log message.");
+        var logger = loggerFactory.CreateLogger<Program>();
 
-        LogManager.Shutdown();
+        logger.LogInformation("Hello, world!");
+
+        LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
+
+        var nlogConfig = new NLogProviderOptions
+        {
+            CaptureMessageTemplates = true,
+            CaptureMessageProperties = true
+        };
+
+        nlogConfig.AutoLoadColoredConsole = true;
+        nlogConfig.AutoReload = true;
+        nlogConfig.DefaultCultureInfo = System.Globalization.CultureInfo.CurrentCulture;
+        nlogConfig.IgnoreEmptyEventProperties = false;
+        nlogConfig.ReplaceExceptionsWithFormattedValue = true;
+        nlogConfig.ShutdownOnDispose = true;
+        nlogConfig.ThrowConfigExceptions = true;
+        nlogConfig.WrappingDefaults = NLogProviderOptions.DefaultWrappingOptions;
+
+        nlogConfig.Targets
+            .FindByName("logfile")
+            .As<FileTarget>()
+            .FileName = logFilePath;
+
+        LogManager.ReconfigExistingLoggers();
+
+        logger.LogInformation($"Logs will be written to {logFilePath}");
     }
 }
-
-
-
-This code loads the logging configuration from the appsettings.json file, sets up dependency injection to use NLog as the logging provider, and then reads the log file name from the command line arguments and the log file path from the appsettings.json file. It then updates the NLog configuration with the log file path and writes some log messages.
-
-The LogManager.Shutdown() method is called at the end to ensure that all logs are written to disk before the application exits.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using NLog;
-using NLog.Config;
-using NLog.Targets;
-
-namespace ConsoleApp1
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .Build();
-
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddNLog(config);
-            });
-
-            var logger = loggerFactory.CreateLogger<Program>();
-
-            var logFileName = args[0];
-            var logFilePath = config["Logging:LogFilePath"] + "\\" + logFileName + "_" + System.DateTime.Now.ToString("dd-MMM-yyyy") + ".txt";
-
-            var nlogConfig = config.GetSection("Logging:NLog").Get<NLogProviderOptions>();
-            var fileTarget = (FileTarget)LogManager.Configuration.FindTargetByName(nlogConfig.Name);
-            fileTarget.FileName = logFilePath;
-
-            LogManager.ReconfigExistingLoggers();
-            logger.LogInformation("This is a test log message");
-
-            LogManager.Shutdown();
-        }
-    }
-}
-
