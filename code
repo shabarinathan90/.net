@@ -156,3 +156,65 @@ namespace ConsoleApp1
     }
 }
 
+
+
+
+
+
+
+
+
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
+
+public class Program
+{
+    private static Logger logger;
+
+    public static void Main(string[] args)
+    {
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .Build();
+
+        LogManager.Configuration = new XmlLoggingConfiguration("NLog.config");
+
+        var logFilePath = args[0] + "_" + DateTime.Now.ToString("dd-MMM-yyyy") + ".txt";
+
+        var target = new FileTarget("logfile")
+        {
+            FileName = logFilePath,
+            Layout = "${longdate} ${level} ${message}"
+        };
+
+        var configSection = config.GetSection("Logging:NLog");
+        var fileTargetSection = configSection.GetSection("FileTarget");
+        var minLevel = configSection.GetValue<LogLevel>("LogLevel");
+
+        var loggingConfig = new LoggingConfiguration();
+        loggingConfig.AddTarget("logfile", target);
+        loggingConfig.LoggingRules.Add(new LoggingRule("*", minLevel, target));
+
+        LogManager.Configuration = loggingConfig;
+
+        logger = LogManager.GetCurrentClassLogger();
+
+        logger.Trace("This is a trace message");
+        logger.Debug("This is a debug message");
+        logger.Info("This is an info message");
+        logger.Warn("This is a warning message");
+        logger.Error("This is an error message");
+        logger.Fatal("This is a fatal error message");
+
+        LogManager.Shutdown();
+    }
+}
+
+
+
+
+
