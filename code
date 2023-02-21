@@ -1,61 +1,3 @@
-To use Serilog to create logs in a text file in a console application, you can follow these steps:
-
-Install the Serilog and Serilog.Sinks.File packages from NuGet.
-
-In your console application, add the following using statements at the top of your C# file
-
-using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.File;
-
-
-Initialize Serilog in your application by configuring the logger with the desired settings. For example, to create a logger that writes logs to a text file, you can use the following code:
-
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-
-
-
-Logging with Serilog.
-
-
-shabarinathans@yahoo.co.in
-how to use serilog to create logsin TXT file in console application
-
-To use Serilog to create logs in a text file in a console application, you can follow these steps:
-
-Install the Serilog and Serilog.Sinks.File packages from NuGet.
-
-In your console application, add the following using statements at the top of your C# file:
-
-csharp
-Copy code
-using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.File;
-Initialize Serilog in your application by configuring the logger with the desired settings. For example, to create a logger that writes logs to a text file, you can use the following code:
-
-csharp
-Copy code
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-In this example, the MinimumLevel property sets the minimum log level to Debug (you can adjust this to a different level, such as Information or Warning, depending on your needs). The WriteTo method specifies that logs should be written to a text file named "logs.txt", and the rollingInterval parameter specifies that the file should roll over to a new file each day.
-
-Use the logger to write logs in your console application. For example, you can write a log statement like this:
-
-Log.Information("This is an informational message.");
-
-
-This will write a log entry to the text file with the message "This is an informational message." and the log level set to Information.
-
-Finally, make sure to dispose of the logger when your application exits by calling Log.CloseAndFlush(). This will ensure that all logs are written to the text file before the application exits.
-
-
-
 static void Main(string[] args)
 {
     // Initialize Serilog logger
@@ -64,16 +6,12 @@ static void Main(string[] args)
         .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
         .CreateLogger();
 
-    // Write some log messages
-    Log.Information("Application starting up.");
-    Log.Debug("Debug message.");
-    Log.Warning("Warning message.");
-    Log.Error("Error message.");
-
-    // Dispose of the logger
-    Log.CloseAndFlush();
-}
+    // Write some We will tag you with a school girl. You have to do at least 3 phone call sessions. Every session is just for 30 to 45 mins. 
 
 
 
-With these steps, you should be able to use Serilog to create logs in a text file in your console application.
+You will teach topics like '10 tips to prepare for success,' which will help the girl child improve at a personal level and in career too. We will share you the curriculum to teach. If you wish, you can aditionally do 2 optional sessions. 
+
+
+
+Note: We will do a Zoom Orientation to explain the activity. Open to only Tamil speaking female volunteers (Check Eligibility below).
