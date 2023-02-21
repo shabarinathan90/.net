@@ -4,14 +4,10 @@ static void Main(string[] args)
     Log.Logger = new LoggerConfiguration()
         .MinimumLevel.Debug()
         .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
-        .CreateLogger();
+        .CreateLogge()
+    // She for She
+//Empower the future you!
 
-    // Write some We will tag you with a school girl. You have to do at least 3 phone call sessions. Every session is just for 30 to 45 mins. 
+Teach a school or college girl child over the phone. You will teach topics like 'How to overcome Challenges.' Topics will be around personality and career development. We will provide teaching curriculum.
 
-
-
-You will teach topics like '10 tips to prepare for success,' which will help the girl child improve at a personal level and in career too. We will share you the curriculum to teach. If you wish, you can aditionally do 2 optional sessions. 
-
-
-
-Note: We will do a Zoom Orientation to explain the activity. Open to only Tamil speaking female volunteers (Check Eligibility below).
+Your experience and knowledge can make a real difference.
