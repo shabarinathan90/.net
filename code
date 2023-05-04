@@ -1,4 +1,16 @@
 static void Main(string[] args)
+Teach basic skills to a college student
+
+Every year, we award scholarships to the most deserving financially poor students. Most of them are parentless & single-parented.
+
+'Bridge' is a 10-day virtual training program for our 1st-year college students. You can volunteer and train students. You have to do only 5 phone call sessions. 
+
+In Bridge, you will help a student identify their goals. Teach them communication skills, emails handling, and many more. 
+
+     
+
+Volunteer now to connect with young minds and help us mold them better. 
+
 {
     // Initialize Serilog logger
     Log.Logger = new LoggerConfiguration()
