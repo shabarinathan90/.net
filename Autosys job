@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Check if the input file exists
+if [ ! -f "$1" ]; then
+    echo "Input file not found!"
+    exit 1
+fi
+
+# Create a directory to store job definition files
+mkdir -p job_definitions
+
+# Loop through each job name in the input file
+while IFS= read -r job_name; do
+    # Fetch the job definition and save it to a file
+    autorep -J "$job_name" > "job_definitions/${job_name}_definition.txt"
+    echo "Job definition for $job_name saved to job_definitions/${job_name}_definition.txt"
+done < "$1"
+
+echo "All job definitions saved successfully."
