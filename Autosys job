@@ -1,4 +1,37 @@
 import os
+import shutil
+import pandas as pd
+
+# Function to copy files from one folder to another based on a list of filenames
+def copy_files_from_excel(excel_file, source_folder, destination_folder):
+    data = pd.read_excel(excel_file)
+    for index, row in data.iterrows():
+        file_name = row[0]  # Assuming file names are in the first column
+        source_file_path = os.path.join(source_folder, file_name)
+        if os.path.exists(source_file_path):
+            destination_file_path = os.path.join(destination_folder, file_name)
+            shutil.copy(source_file_path, destination_file_path)
+            print(f"File '{file_name}' copied to '{destination_folder}'")
+        else:
+            print(f"File '{file_name}' does not exist in '{source_folder}'")
+
+# Replace 'excel_file_path' with the path to your Excel file containing the 500 file names
+excel_file_path = 'path_to_your_excel_file.xlsx'
+# Replace 'source_folder_path' with the path to your source folder containing all 1000 files
+source_folder_path = 'path_to_your_source_folder'
+# Replace 'destination_folder_path' with the path to the destination folder where you want to copy the files
+destination_folder_path = 'path_to_your_destination_folder'
+
+copy_files_from_excel(excel_file_path, source_folder_path, destination_folder_path)
+
+
+
+
+
+
+
+
+import os
 
 # Function to merge contents of all files into a single file
 def merge_files_into_single_file(folder_path, output_file):
