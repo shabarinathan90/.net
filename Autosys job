@@ -1,3 +1,46 @@
+import os
+
+# Function to add a line to a file after a particular line
+def add_line_to_file(file_path, line_to_add, after_line):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    with open(file_path, 'w') as file:
+        for line in lines:
+            file.write(line)
+            if after_line in line:
+                file.write(line_to_add + '\n')
+
+# Function to read the Excel file and add lines to corresponding files
+def add_lines_from_excel(excel_file, folder_path):
+    import pandas as pd
+    data = pd.read_excel(excel_file)
+    for index, row in data.iterrows():
+        file_name = row[0]  # Assuming file names are in the first column
+        line_to_add = row[1]  # Assuming updated lines are in the second column
+        file_path = os.path.join(folder_path, file_name)
+        add_line_to_file(file_path, line_to_add, "particular_line")  # Replace "particular_line" with the string after which you want to add the new line
+
+# Replace 'excel_file_path' with the path to your Excel file
+excel_file_path = 'path_to_your_excel_file.xlsx'
+# Replace 'folder_path' with the path to your folder containing the files
+folder_path = 'path_to_your_folder'
+
+add_lines_from_excel(excel_file_path, folder_path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #!/bin/bash
 
 # Check if the input file exists
