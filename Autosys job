@@ -1,3 +1,39 @@
+ChatGPT 3.5
+
+User
+I want to send a communication mail to all . To participate in Volunteer event. The event is all about the segregation of application forms and letters  from underprivileged school students to obtain free college from agaram ngo. The Volunteer should br read tamil language.  
+Pleaee write a 
+
+ChatGPT
+Subject: Join Us in Making a Difference: Volunteer for Agaram NGO's Student Support Program!
+
+Dear [Recipient],
+
+We hope this email finds you well. At Agaram NGO, we are dedicated to empowering underprivileged students by providing them with access to quality education and opportunities for a brighter future.
+
+We are excited to announce a volunteer opportunity that we believe aligns with your passion for making a positive impact in the community. We are organizing an event focused on the segregation of application forms and letters from underprivileged school students who are applying for free college support through our organization.
+
+As a volunteer, your role will be crucial in ensuring that each application is carefully reviewed and processed. Additionally, proficiency in Tamil language is required, as many of the documents will be in Tamil.
+
+Event Details:
+
+Date: [Insert Date]
+Time: [Insert Time]
+Location: [Insert Location]
+We believe that every child deserves access to education and the opportunity to pursue their dreams. By volunteering your time and skills, you will be directly contributing to this mission and making a difference in the lives of these students.
+
+If you are interested in joining us for this event, please RSVP by [Insert RSVP Deadline] by replying to this email. If you have any questions or require further information, feel free to contact us at [Insert Contact Information].
+
+Thank you for considering this opportunity to give back to the community and support the education of underprivileged students.
+
+Warm regards,
+
+
+
+
+
+
+
 import os
 import shutil
 import pandas as pd
