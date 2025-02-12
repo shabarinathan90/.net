@@ -1,3 +1,19 @@
+**Subject:** Query Execution Timing & Vertica Read-Only Access  
+
+Hi Sunder,  
+
+The query can be executed anytime after 5 AM EST, considering the Insight flow would be completed by then. If they plan to pull data for more than two years, please inform us in advance so we can monitor the database performance. Based on our experience over the years, we do not anticipate any issues.  
+
+Additionally, if I recall correctly, during a similar discussion around 2016, Vikram Gupta provided your team with **read-only** access to the Vertica database for report execution. Upon reviewing the current read-only access, I found that only Nick, Bikas, and yourself have it. Would it be possible to extend this access to your team so they can run the reports independently?  
+
+Let me know your thoughts.  
+
+Best regards,  
+[Your Name]
+
+
+
+
 Subject: Women's Day Testimony
 
 Dear [Recipient's Name],
