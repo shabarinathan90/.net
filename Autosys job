@@ -1,3 +1,39 @@
+This is an interesting use case! Here’s how you can structure it for automation:  
+
+### **Use Case: Automated SSH Key Management & Communication**  
+
+#### **Background:**  
+With evolving GIS policies, SSH keys need to be periodically rotated for security compliance. Each application and server requires updated keys to ensure seamless communication between upstream and downstream systems. The manual process of identifying correct contacts, sending emails, and following up is tedious, prone to delays, and can trigger vulnerability reports if not updated on time.  
+
+#### **Challenge:**  
+- **Manual Effort:** Identifying application-specific contacts and sending SSH key updates is time-consuming.  
+- **High Volume:** With thousands of applications, servers, and feeds, tracking key updates manually leads to inefficiencies.  
+- **Vulnerability Risks:** Delays in updating SSH keys increase security risks and can lead to compliance violations.  
+- **Lack of Centralized Tracking:** No automated way to verify which servers have updated keys, making follow-ups difficult.  
+
+#### **Solution:**  
+An **AI-driven or script-based automation** can be implemented to streamline the SSH key update process:  
+
+1. **Server & Contact Mapping:**  
+   - Extract authorized SSH key files from servers.  
+   - Map keys to application owners and authorized contacts (assuming this data exists in a central repository like a CMDB or LDAP).  
+
+2. **Automated Notification & Tracking:**  
+   - Identify which keys were newly generated and which require updates.  
+   - Auto-generate email notifications to the respective application teams with SSH key update instructions.  
+   - Track responses and follow-ups to ensure updates are completed within SLA.  
+
+3. **Compliance & Vulnerability Management:**  
+   - Periodic scanning of authorized key files to detect outdated or unapproved keys.  
+   - Automated alerts for missing or delayed updates.  
+   - Dashboard for tracking compliance status of SSH key updates across all applications.  
+
+Would you like a **Python script** to start with this automation (e.g., parsing authorized SSH key files, identifying owners, and auto-generating emails)? Or do you need a design document for a full-fledged system?
+
+
+
+
+
 Here's the refined version with a more realistic background:  
 
 ### **Background:**  
