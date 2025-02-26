@@ -1,3 +1,14 @@
+### **Batch Monitoring – Roles & Responsibilities**  
+
+1. **Feeds Data Sanity Checks** – Validate incoming feeds for data quality, format, and completeness.  
+2. **Continuous Feed Monitoring** – Track feeds in real-time, escalate delays, and ensure timely ingestion.  
+3. **Job Failure Troubleshooting** – Identify root causes, apply fixes, and collaborate for complex issues.  
+4. **Stakeholder Communication** – Provide regular updates, send alerts for delays, and document incidents.  
+
+Let me know if you need further refinements!
+
+
+
 Here's the refined version of the **Use Case** with the additional detail about the impact of failure to update SSH keys:
 
 ---
