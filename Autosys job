@@ -1,3 +1,67 @@
+Here’s a structured **one-slider template** for your presentation on **Automated SSH Key Management and Communication**:  
+
+---
+
+## **📌 Slide Title:**  
+### **Automated SSH Key Management & Communication**  
+
+---
+
+### **🛑 Problem Statement (Current Challenges)**  
+- No centralized tracking of SSH keys across servers.  
+- Difficult to identify when a key was created or used.  
+- No linkage between SSH keys and upstream/downstream systems.  
+- Manual monitoring of SSH key expiration leads to security risks.  
+
+---
+
+### **💡 Solution**  
+1. **Fetch Server & Application Mapping from MyCTO API**  
+   - Retrieve **all servers** and their **upstream/downstream dependencies**.  
+2. **Scan Each Server for SSH Key Creation Dates**  
+   - Extract key details from `~/.ssh/authorized_keys`.  
+   - Capture **when the key was created** and **who owns it**.  
+3. **Tag Keys with Upstream/Downstream Applications**  
+   - Cross-reference with MyCTO API to link each key to relevant applications.  
+4. **Automate Expiry Alerts & Key Rotation**  
+   - Check if a key is **about to expire** and notify the owner via email.  
+   - Schedule automated key **rotation and removal** for security compliance.  
+
+---
+
+### **📈 Productivity Gain & OPEX Impact**  
+✅ **Operational Efficiency:** Eliminates manual key tracking.  
+✅ **Security Enhancement:** Prevents unauthorized access with expired keys.  
+✅ **Reduced Incidents:** Lowers **risk of FCI (Failed Control Incident)** due to compliance breaches.  
+✅ **Time Savings:** Automates key management across **100s of servers**, reducing admin effort.  
+
+---
+
+### **🛠 Implementation Requirements**  
+
+| Component | Details |
+|-----------|---------|
+| **API Integration** | Fetch server details & dependencies from MyCTO API |
+| **Shell Script / Python Script** | Scan SSH keys on all servers & extract metadata |
+| **Database (PostgreSQL / MySQL)** | Store key details, creation date, and application mapping |
+| **Job Scheduler (Cron / Ansible)** | Automate periodic scanning & email alerts |
+| **Email Notification** | Send expiry alerts via SMTP / corporate email service |
+
+---
+
+### **🚀 Next Steps**  
+- **Develop API calls** to fetch MyCTO server mappings.  
+- **Implement key scanning script** & database storage.  
+- **Set up cron jobs** for periodic scans & alerts.  
+- **Deploy monitoring dashboard** for SSH key status visibility.  
+
+---
+
+This **one-slider template** covers all key aspects in a **concise and structured way**. Let me know if you need any refinements!
+
+
+
+
 ### **Batch Monitoring – Roles & Responsibilities**  
 
 1. **Feeds Data Sanity Checks** – Validate incoming feeds for data quality, format, and completeness.  
