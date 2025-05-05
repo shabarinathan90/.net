@@ -1,4 +1,68 @@
 
+import asyncio
+from playwright.async_api import async_playwright
+
+# === User Inputs ===
+VOLUNTEER_DATE = "04/25/2025"
+VOLUNTEER_DURING_WORKDAY = "Yes"  # or "No"
+
+async def run():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=False, slow_mo=100)
+        context = await browser.new_context()
+
+        # Open portal (SSO assumed handled)
+        page = await context.new_page()
+        await page.goto("https://your-cybergrants-url.com")  # Replace with actual URL
+
+        # Step through navigation
+        await page.click("text=Volunteers & Record Hours")
+        await page.click("text=Administrative Access")
+        await page.click("text=Create or Manage Access")
+        await page.click("text=Events I Manage/Create")
+
+        # Wait for event list to load
+        await page.wait_for_selector("input[placeholder='Search by event name']")
+        await page.fill("input[placeholder='Search by event name']", "Your Event Name")  # Replace event name
+        await page.press("input[placeholder='Search by event name']", "Enter")
+
+        # Click event link
+        await page.wait_for_selector("text=Your Event Name")
+        await page.click("text=Your Event Name")
+
+        # Log hours dropdown
+        await page.select_option("select#actionDropdown", "Log Hours")  # Replace with actual selector if different
+        await page.click("text=Go")
+
+        # Wait for unsubmitted page
+        await page.wait_for_selector("select#filterStatus")
+        await page.select_option("select#filterStatus", "Unsubmitted")
+
+        # Wait for the volunteer table to load
+        await page.wait_for_selector("table")
+
+        # Fill all rows
+        rows = await page.query_selector_all("table tbody tr")
+        for row in rows:
+            inputs = await row.query_selector_all("input")
+            selects = await row.query_selector_all("select")
+
+            if inputs and selects:
+                await inputs[0].fill("1")  # Hours volunteered
+                await selects[0].select_option(label=VOLUNTEER_DURING_WORKDAY)  # Yes/No
+                await inputs[1].fill(VOLUNTEER_DATE)  # Date
+
+        # Click submit
+        await page.click("text=Submit Hours")
+
+        print("Done submitting hours.")
+        await context.close()
+        await browser.close()
+
+asyncio.run(run())
+
+
+
 Here’s a refined version of your consent email:  
 
 ---  
