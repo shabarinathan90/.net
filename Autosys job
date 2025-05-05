@@ -1,4 +1,89 @@
 
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+class CyberGrantsLogger:
+    def __init__(self, event_name, volunteered_yes_no, date_str):
+        self.event_name = event_name
+        self.volunteered_yes_no = volunteered_yes_no
+        self.date_str = date_str
+        self.driver = webdriver.Chrome(executable_path="chromedriver.exe")  # update path if needed
+
+    def wait_and_click(self, by, value):
+        WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((by, value))).click()
+        time.sleep(2)
+
+    def wait_and_fill(self, by, value, input_value):
+        WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((by, value))).send_keys(input_value)
+
+    def start(self):
+        self.driver.get("https://your-cybergrants-url.com")  # Replace with actual URL
+        WebDriverWait(self.driver, 60).until(EC.presence_of_element_located((By.TAG_NAME, "body")))  # Wait for SSO
+
+        self.navigate_to_event_page()
+        self.fill_hours()
+        self.driver.quit()
+
+    def navigate_to_event_page(self):
+        self.wait_and_click(By.LINK_TEXT, "Volunteers & Record Hours")
+        self.wait_and_click(By.LINK_TEXT, "Administrative Access")
+        self.wait_and_click(By.LINK_TEXT, "Create or Manage Access")
+        self.wait_and_click(By.LINK_TEXT, "Events I manage/Create")
+
+        search_box = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text']")))
+        search_box.send_keys(self.event_name)
+        time.sleep(3)
+        self.wait_and_click(By.PARTIAL_LINK_TEXT, self.event_name)
+
+        select = Select(self.driver.find_element(By.NAME, "event_action"))
+        select.select_by_visible_text("Log Hours")
+        self.driver.find_element(By.NAME, "go").click()
+        time.sleep(3)
+
+        status_dropdown = Select(self.driver.find_element(By.NAME, "participant_status"))
+        status_dropdown.select_by_visible_text("Unsubmitted")
+        time.sleep(5)
+
+    def fill_hours(self):
+        rows = self.driver.find_elements(By.CSS_SELECTOR, "table tr")
+        count = 0
+        for row in rows:
+            try:
+                hour_input = row.find_element(By.CSS_SELECTOR, "input[type='text']")
+                hour_input.clear()
+                hour_input.send_keys("1")
+
+                select_elem = row.find_element(By.TAG_NAME, "select")
+                Select(select_elem).select_by_visible_text(self.volunteered_yes_no)
+
+                date_input = row.find_element(By.CSS_SELECTOR, "input[type='date']")
+                date_input.send_keys(self.date_str)
+                count += 1
+            except Exception:
+                continue
+
+        print(f"Filled {count} entries.")
+        self.driver.find_element(By.NAME, "submit").click()
+        print("Submitted successfully.")
+
+# --- Run ---
+if __name__ == "__main__":
+    logger = CyberGrantsLogger(
+        event_name="Tree Plantation",
+        volunteered_yes_no="Yes",  # or "No"
+        date_str="05/05/2025"      # Format: MM/DD/YYYY if required
+    )
+    logger.start()
+
+
+
+
+
+
+
 from playwright.sync_api import sync_playwright
 import time
 
