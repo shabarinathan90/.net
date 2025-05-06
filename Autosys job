@@ -1,4 +1,23 @@
 
+from selenium.webdriver.support.ui import Select
+
+# Wait for the dropdown to be present
+WebDriverWait(driver, 20).until(
+    EC.presence_of_element_located((By.ID, "x-action-select"))
+)
+
+# Select "Log Hours" from the dropdown
+action_select = Select(driver.find_element(By.ID, "x-action-select"))
+action_select.select_by_visible_text("Log Hours")
+
+# Wait and click the "Go" button
+WebDriverWait(driver, 20).until(
+    EC.element_to_be_clickable((By.ID, "x-action-submit"))
+).click()
+
+
+
+
 self.wait_and_click(By.XPATH, "//span[normalize-space(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))='events i manage create']")
 
 
