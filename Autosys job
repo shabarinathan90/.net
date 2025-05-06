@@ -1,3 +1,40 @@
+def fill_hours(self):
+    rows = self.driver.find_elements(By.CSS_SELECTOR, "table tr")
+    count = 0
+    for row in rows:
+        try:
+            # 1. Fill Hours
+            hour_input = row.find_element(By.CSS_SELECTOR, "input[type='text']")
+            hour_input.clear()
+            hour_input.send_keys("1")
+
+            # 2. Select Volunteered Yes/No
+            select_elements = row.find_elements(By.TAG_NAME, "select")
+            if len(select_elements) >= 1:
+                Select(select_elements[0]).select_by_visible_text(self.volunteered_yes_no)
+
+            # 3. Select Skill Type
+            if len(select_elements) >= 2:
+                Select(select_elements[1]).select_by_visible_text(self.skill_type)
+
+            # 4. Fill Date
+            date_input = row.find_element(By.CSS_SELECTOR, "input[type='date']")
+            date_input.clear()
+            date_input.send_keys(self.date_str)
+
+            count += 1
+        except Exception as e:
+            print(f"Skipping row due to error: {e}")
+            continue
+
+    print(f"Filled {count} entries.")
+    self.driver.find_element(By.NAME, "submit").click()
+    print("Submitted successfully.")
+
+
+
+
+
 
 from selenium.webdriver.support.ui import Select
 
