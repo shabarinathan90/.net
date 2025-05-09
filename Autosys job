@@ -1,4 +1,29 @@
 
+Here's a more polished and business-appropriate version of your message:
+
+---
+
+**Subject:** Follow-up on Pull Back Script Issue and Communication with Dev Team
+
+Hi Kali,
+
+The communication to the Dev team was sent after a thorough analysis of both the Pull Back and Fact Load scripts. The email that Anil referred to in his analysis is already captured in the trail below.
+
+Additionally, the Pull Back issue was initially raised with the Dev team in September of last year, and it has remained pending for prioritization for the past seven months. For your reference, the attached email contains a detailed explanation along with the relevant script names that require fixes. This has also been discussed in detail with Sireesha.
+
+Please note that all emails sent to the Dev team are backed by complete and thorough analysis.
+
+Regards,
+\[Your Name]
+
+---
+
+Would you like help drafting the attachment content or summarizing the email to Dev?
+
+
+
+
+
 def fill_hours(self):
     count = 0
     row_count = len(self.driver.find_elements(By.CSS_SELECTOR, "table tr"))
