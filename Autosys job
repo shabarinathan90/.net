@@ -1,3 +1,116 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
+from exchangelib import Credentials, Account, Configuration, DELEGATE
+import datetime, random, time, os, re
+
+# --- Constants ---
+EMAIL = 'shabarinathan.sekar@bofa.com'
+CHROMEDRIVER_PATH = r"C:\Users\zkgtvq9\Desktop\py-drivers\chrome\chromedriver-135.exe"
+MYITSM_URL = "https://your.myitsm.url"
+WORKORDER_FOLDER_NAME = 'workorder'
+SPENT_TIMES = [45, 90, 120, 150]
+TEMPLATES = ['MAPS GET SRCM Direct Database Update - CSAR']
+ASSIGNEE = "S, HAN"
+OWNER = "Sekar, Shabarinathan"
+LOG_FOLDER = r"C:\Users\zkgtvq9\Desktop\myitsm_logs"
+
+# --- Helper to remove non-BMP characters ---
+def strip_non_bmp(text):
+    return ''.join(c for c in text if ord(c) <= 0xFFFF)
+
+# --- Ensure log directory exists ---
+os.makedirs(LOG_FOLDER, exist_ok=True)
+
+# --- Setup Exchange ---
+creds = Credentials()  # Add secure loading if needed
+config = Configuration(server='outlook.office365.com', credentials=creds)
+account = Account(primary_smtp_address=EMAIL, autodiscover=True, config=config, access_type=DELEGATE)
+
+# --- Fetch mails ---
+folder = account.inbox / WORKORDER_FOLDER_NAME
+items = folder.all().order_by('-datetime_received')
+
+# --- Launch WebDriver ---
+service = Service(executable_path=CHROMEDRIVER_PATH)
+options = Options()
+driver = webdriver.Chrome(service=service, options=options)
+wait = WebDriverWait(driver, 20)
+action = ActionChains(driver)
+
+try:
+    for mail in items:
+        subject = strip_non_bmp(mail.subject or "No Subject")
+        body_lines = (mail.text_body or "").splitlines()
+        first_100_lines = "\n".join(body_lines[:100])
+        body_cleaned = strip_non_bmp(first_100_lines)
+
+        driver.maximize_window()
+        driver.get(MYITSM_URL)
+        wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "pwa-frame")))
+
+        user_input = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Enter customer name, email or corporate ID']")))
+        user_input.send_keys("S, SHA")
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@role='option']"))).click()
+
+        wait.until(EC.element_to_be_clickable((By.ID, "rx-select-4"))).click()
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//div[text()='APS']"))).click()
+
+        wait.until(EC.element_to_be_clickable((By.ID, "rx-select-5"))).click()
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//div[normalize-space()='Completed']"))).click()
+
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Browse']"))).click()
+        search_input = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[@placeholder='Type here to search templates']")))
+        search_input.send_keys(TEMPLATES[0], Keys.ENTER)
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Select template']"))).click()
+
+        summary_field = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Summary']")))
+        updated_summary = summary_field.get_attribute("value") + " " + subject
+        summary_field.clear()
+        summary_field.send_keys(updated_summary)
+
+        desc_field = driver.find_element(By.XPATH, "//textarea[@placeholder='Description']")
+        desc_field.send_keys("\n" + body_cleaned)
+
+        assignee_input = driver.find_element(By.XPATH, "//input[@placeholder='Start typing to find an assignee']")
+        assignee_input.send_keys(ASSIGNEE)
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@role='option']"))).click()
+
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@title='Save ticket']"))).click()
+        time.sleep(10)
+
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//smt-button[@class='ng-star-inserted']"))).click()
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Effort log']"))).click()
+
+        effort_value = str(random.choice(SPENT_TIMES))
+        for testid in ['rx-counter-209', 'rx-counter-217']:
+            input_field = wait.until(EC.visibility_of_element_located((By.XPATH, f"//input[starts-with(@data-testid, '{testid}')]")))
+            input_field.clear()
+            input_field.send_keys(effort_value)
+
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Add']"))).click()
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Close']"))).click()
+
+        # Log subject to file
+        safe_subject = re.sub(r'[\\/*?:"<>|]', "_", subject[:50])
+        log_file_path = os.path.join(LOG_FOLDER, f"{safe_subject}.txt")
+        with open(log_file_path, "w", encoding="utf-8") as log_file:
+            log_file.write(f"Ticket created for subject:\n{subject}\n\nBody:\n{body_cleaned}")
+
+finally:
+    driver.quit()
+
+
+
+
+
+
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
