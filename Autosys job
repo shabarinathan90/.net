@@ -1,3 +1,174 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
+from exchangelib import Credentials, Account, Configuration, DELEGATE
+import datetime, random, time
+
+# --- Constants ---
+EMAIL = 'shabarinathan.sekar@bofa.com'
+CHROMEDRIVER_PATH = r"C:\Users\zkgtvq9\Desktop\py-drivers\chrome\chromedriver-135.exe"
+MYITSM_URL = "https://your.myitsm.url"
+WORKORDER_FOLDER_NAME = 'workorder'
+SPENT_TIMES = [45, 90, 120, 150]
+TEMPLATES = ['MAPS GET SRCM Direct Database Update - CSAR']
+AITS = ['COMPREHENSIVE SOURCE FOR ANALYTICAL REPORTING']
+ASSIGNEE = "S, HAN"
+OWNER = "Sekar, Shabarinathan"
+
+# --- Setup Exchange ---
+creds = Credentials()  # Fill with your credentials securely if needed
+config = Configuration(server='outlook.office365.com', credentials=creds)
+account = Account(primary_smtp_address=EMAIL, autodiscover=True, config=config, access_type=DELEGATE)
+
+# --- Fetch last month mail from specific folder ---
+today = datetime.date.today()
+first_day = today.replace(day=1)
+last_month_str = (first_day - datetime.timedelta(days=1)).strftime("%Y-%m")
+
+folder = account.root['Top of Information Store']['Inbox'][WORKORDER_FOLDER_NAME]
+latest_item = next((item for item in folder.all().order_by('-datetime_received')
+                    if item.datetime_received.strftime("%Y-%m") == last_month_str), None)
+
+if not latest_item:
+    print("No matching email found for last month.")
+    exit()
+
+subject = latest_item.subject
+body_lines = latest_item.text_body.splitlines()
+body = "\n".join(line for line in body_lines if "Thanks" not in line)
+
+# --- Launch WebDriver ---
+service = Service(executable_path=CHROMEDRIVER_PATH)
+options = Options()
+driver = webdriver.Chrome(service=service, options=options)
+wait = WebDriverWait(driver, 20)
+action = ActionChains(driver)
+
+try:
+    driver.maximize_window()
+    driver.get(MYITSM_URL)
+
+    # Switch to iframe
+    wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "pwa-frame")))
+
+    # Fill customer field
+    user_input = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Enter customer name, email or corporate ID']")))
+    user_input.send_keys("S, SHA")
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@role='option']"))).click()
+
+    # Select Work Order type
+    wait.until(EC.element_to_be_clickable((By.ID, "rx-select-4"))).click()
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//div[text()='APS']"))).click()
+
+    # Select Work Order status
+    wait.until(EC.element_to_be_clickable((By.ID, "rx-select-5"))).click()
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//div[normalize-space()='Completed']"))).click()
+
+    # Select template
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Browse']"))).click()
+    search_input = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[@placeholder='Type here to search templates']")))
+    search_input.send_keys(TEMPLATES[0], Keys.ENTER)
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Select template']"))).click()
+
+    # Fill summary and description
+    summary_field = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Summary']")))
+    updated_summary = summary_field.get_attribute("value") + " " + subject
+    summary_field.clear()
+    summary_field.send_keys(updated_summary)
+
+    desc_field = driver.find_element(By.XPATH, "//textarea[@placeholder='Description']")
+    desc_field.send_keys("\n" + body)
+
+    # Set assignee
+    assignee_input = driver.find_element(By.XPATH, "//input[@placeholder='Start typing to find an assignee']")
+    assignee_input.send_keys(ASSIGNEE)
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@role='option']"))).click()
+
+    # Save ticket
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@title='Save ticket']"))).click()
+    time.sleep(10)  # Might still be needed due to page re-render
+
+    # Edit & add effort log
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//smt-button[@class='ng-star-inserted']"))).click()
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Effort log']"))).click()
+
+    effort_value = str(random.choice(SPENT_TIMES))
+    for testid in ['rx-counter-209', 'rx-counter-217']:
+        input_field = wait.until(EC.visibility_of_element_located((By.XPATH, f"//input[starts-with(@data-testid, '{testid}')]")))
+        input_field.clear()
+        input_field.send_keys(effort_value)
+
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Add']"))).click()
+    wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Close']"))).click()
+
+finally:
+    driver.quit()
+
+
+
+
+
+
+from exchangelib import DELEGATE, Account, Credentials, Configuration
+import datetime, random, time, sys
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import StaleElementReferenceException
+
+# Exchange login
+creds = Credentials(username='your_username', password='your_password')  # update credentials
+config_mail = Configuration(server='outlook.office365.com', credentials=creds)
+account = Account(primary_smtp_address='shabarinathan.sekar@bofa.com',
+                  autodiscover=True, config=config_mail, access_type=DELEGATE)
+
+# Random values
+spent_list = [45, 90, 120, 150]
+aits = ['COMPREHENSIVE SOURCE FOR ANALYTICAL REPORTING']
+templates = ['MAPS GET SRCM Direct Database Update - CSAR']
+owner = "Sekar, Shabarinathan"
+
+# Selenium Setup
+service = Service(executable_path=r"C:\Users\zkgtvq9\Desktop\py-drivers\chrome\chromedriver-135.exe")
+driver = webdriver.Chrome(service=service)
+driver.maximize_window()
+action = ActionChains(driver)
+driver.get("https://<your-web-form-url>")
+driver.implicitly_wait(30)
+
+# Switch to iframe if needed
+frame = driver.find_element(By.XPATH, "//iframe[@id='pwa-frame']")
+driver.switch_to.frame(frame)
+time.sleep(8)
+
+# 📬 Fetch all mails from the folder
+folder = account.root / 'Top of Information Store' / 'Inbox' / 'workorder'
+for item in folder.all().order_by('-datetime_received'):
+    sub = str(item.subject)
+    out_list = [line for line in str(item.text_body).splitlines() if "Thanks" not in line]
+    body = '\n'.join(out_list)
+
+    ran_num = random.choice(spent_list)
+    template_name = random.choice(templates)
+
+    # 📝 Continue with Selenium ticket creation...
+    # Fill form fields like user_prompt, wo_type, summary, description, etc.
+    # Refer to your full existing code for field-by-field processing.
+    # ...
+
+# Finally close driver
+driver.close()
+
+
+
 
 Here's a more polished and business-appropriate version of your message:
 
