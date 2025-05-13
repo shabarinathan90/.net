@@ -1,3 +1,46 @@
+# Effort Log Handling
+try:
+    # Click the options menu (3 dots)
+    effort_menu_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//smt-button[@class='ng-star-inserted']")))
+    driver.execute_script("arguments[0].scrollIntoView(true);", effort_menu_button)
+    effort_menu_button.click()
+
+    # Click 'Effort log'
+    effort_log_option = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Effort log']")))
+    effort_log_option.click()
+
+    # Wait for Effort log dialog to appear
+    wait.until(EC.visibility_of_element_located((By.XPATH, "//div[contains(@class,'modal-dialog')]")))
+
+    # Enter effort values
+    effort_value = str(random.choice(SPENT_TIMES))
+    for testid in ['rx-counter-209', 'rx-counter-217']:
+        input_field = wait.until(EC.visibility_of_element_located(
+            (By.XPATH, f"//input[starts-with(@data-testid, '{testid}')]")
+        ))
+        input_field.clear()
+        input_field.send_keys(effort_value)
+
+    # Click Add
+    add_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Add']")))
+    driver.execute_script("arguments[0].scrollIntoView(true);", add_button)
+    add_button.click()
+
+    # Close the dialog
+    close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Close']")))
+    driver.execute_script("arguments[0].scrollIntoView(true);", close_button)
+    close_button.click()
+
+except TimeoutException as e:
+    log_file.write(f"{subject} - ERROR in Effort log: Timeout - {str(e)}\n")
+except Exception as e:
+    log_file.write(f"{subject} - ERROR in Effort log: {str(e)}\n")
+
+
+
+
+
+
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
