@@ -1,3 +1,17 @@
+
+elements = driver.find_elements(By.XPATH, "//span[normalize-space()='Effort Log']")
+print(f"Found {len(elements)} elements with text 'Effort Log'")
+
+if elements:
+    # Climb up to button (the clickable ancestor) and click
+    button = elements[0].find_element(By.XPATH, "./ancestor::button")
+    driver.execute_script("arguments[0].click();", button)  # safer than button.click()
+else:
+    print("Effort Log element not found")
+
+
+
+
 elements = driver.find_elements(By.XPATH, "//span[normalize-space()='Effort Log']")
 print(f"Found {len(elements)} elements with text 'Effort Log'")
 
