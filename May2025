@@ -1,3 +1,10 @@
+elements = driver.find_elements(By.XPATH, "//span[normalize-space()='Effort Log']")
+print(f"Found {len(elements)} elements with text 'Effort Log'")
+
+
+
+
+
 # Effort Log Handling
 try:
     # Click the options menu (3 dots)
