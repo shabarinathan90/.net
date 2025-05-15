@@ -301,16 +301,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import StaleElementReferenceException
-
-# Exchange login
-creds = Credentials(username='your_username', password='your_password')  # update credentials
-config_mail = Configuration(server='outlook.office365.com', credentials=creds)
-account = Account(primary_smtp_address='shabarinathan.sekar@bofa.com',
-                  autodiscover=True, config=config_mail, access_type=DELEGATE)
-
-# Random values
-
+from selenium.common.exceptions 
 # Switch to iframe if needed
 frame = driver.find_element(By.XPATH, "//iframe[@id='pwa-frame']")
 driver.switch_to.frame(frame)
