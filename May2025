@@ -110,13 +110,12 @@ from exchangelib import Credentials, Account, Configuration, DELEGATE
 import datetime, random, time, os
 
 # --- Constants ---
-EMAIL = 'shabarinathan.sekar@bofa.com'
-CHROMEDRIVER_PATH = r"C:\Users\zkgtvq9\Desktop\py-drivers\chrome\chromedriver-135.exe"
+EMAIL 
+
 MYITSM_URL = "https://your.myitsm.url"
 WORKORDER_FOLDER_NAME = 'workorder'
 SPENT_TIMES = [45, 90, 120, 150]
-TEMPLATES = ['MAPS GET SRCM Direct Database Update - CSAR']
-AITS = ['COMPREHENSIVE SOURCE FOR ANALYTICAL REPORTING']
+TEMPLATES = 
 ASSIGNEE = "S, HAN"
 OWNER = "Sekar, Shabarinathan"
 
