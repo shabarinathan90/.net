@@ -113,18 +113,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 from exchangelib import Credentials, Account, Configuration, DELEGATE
-import datetime, random, time
-
-# --- Constants ---
-EMAIL = 'shabarinathan.sekar@bofa.com'
-CHROMEDRIVER_PATH = r"C:\Users\zkgtvq9\Desktop\py-drivers\chrome\chromedriver-135.exe"
-MYITSM_URL = "https://your.myitsm.url"
-WORKORDER_FOLDER_NAME = 'workorder'
-SPENT_TIMES = [45, 90, 120, 150]
-TEMPLATES = ['MAPS GET SRCM Direct Database Update - CSAR']
-AITS = ['COMPREHENSIVE SOURCE FOR ANALYTICAL REPORTING']
-ASSIGNEE = "S, HAN"
-OWNER = "Sekar, Shabarinathan"
+import datetime, random, tim
 
 # --- Setup Exchange ---
 creds = Credentials()  # Fill with your credentials securely if needed
@@ -222,17 +211,7 @@ from selenium.common.exceptions import TimeoutException, StaleElementReferenceEx
 from exchangelib import Credentials, Account, Configuration, DELEGATE
 import datetime, random, time
 
-# --- Constants ---
-EMAIL = 'shabarinathan.sekar@bofa.com'
-CHROMEDRIVER_PATH = r"C:\Users\zkgtvq9\Desktop\py-drivers\chrome\chromedriver-135.exe"
-MYITSM_URL = "https://your.myitsm.url"
-WORKORDER_FOLDER_NAME = 'workorder'
-SPENT_TIMES = [45, 90, 120, 150]
-TEMPLATES = ['MAPS GET SRCM Direct Database Update - CSAR']
-AITS = ['COMPREHENSIVE SOURCE FOR ANALYTICAL REPORTING']
-ASSIGNEE = "S, HAN"
-OWNER = "Sekar, Shabarinathan"
-
+# --- Constants -
 # --- Setup Exchange ---
 creds = Credentials()  # Fill with your credentials securely if needed
 config = Configuration(server='outlook.office365.com', credentials=creds)
@@ -321,16 +300,7 @@ from selenium.common.exceptions import TimeoutException, StaleElementReferenceEx
 from exchangelib import Credentials, Account, Configuration, DELEGATE
 import datetime, random, time
 
-# --- Constants ---
-EMAIL = 'shabarinathan.sekar@bofa.com'
-CHROMEDRIVER_PATH = r"C:\Users\zkgtvq9\Desktop\py-drivers\chrome\chromedriver-135.exe"
-MYITSM_URL = "https://your.myitsm.url"
-WORKORDER_FOLDER_NAME = 'workorder'
-SPENT_TIMES = [45, 90, 120, 150]
-TEMPLATES = ['MAPS GET SRCM Direct Database Update - CSAR']
-AITS = ['COMPREHENSIVE SOURCE FOR ANALYTICAL REPORTING']
-ASSIGNEE = "S, HAN"
-OWNER = "Sekar, Shabarinathan"
+# --- 
 
 # --- Setup Exchange ---
 creds = Credentials()  # Fill with your credentials securely if needed
@@ -442,18 +412,6 @@ account = Account(primary_smtp_address='shabarinathan.sekar@bofa.com',
                   autodiscover=True, config=config_mail, access_type=DELEGATE)
 
 # Random values
-spent_list = [45, 90, 120, 150]
-aits = ['COMPREHENSIVE SOURCE FOR ANALYTICAL REPORTING']
-templates = ['MAPS GET SRCM Direct Database Update - CSAR']
-owner = "Sekar, Shabarinathan"
-
-# Selenium Setup
-service = Service(executable_path=r"C:\Users\zkgtvq9\Desktop\py-drivers\chrome\chromedriver-135.exe")
-driver = webdriver.Chrome(service=service)
-driver.maximize_window()
-action = ActionChains(driver)
-driver.get("https://<your-web-form-url>")
-driver.implicitly_wait(30)
 
 # Switch to iframe if needed
 frame = driver.find_element(By.XPATH, "//iframe[@id='pwa-frame']")
